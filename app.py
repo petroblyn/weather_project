@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import psycopg2
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -16,27 +16,36 @@ DB_CONFIG = {
 
 @app.route("/")
 def index():
+    selected_city = request.args.get("city")
+
     conn = psycopg2.connect(**DB_CONFIG)
+
+    # Get list of cities for dropdown
+    cities_query = "SELECT DISTINCT city FROM weather ORDER BY city;"
+    cities = pd.read_sql(cities_query, conn)["city"].tolist()
+
+    if not selected_city and cities:
+        selected_city = cities[0]
 
     query = """
     SELECT city, temperature, humidity, condition, created_at
     FROM weather
+    WHERE city = %s
     ORDER BY created_at ASC;
     """
 
-    df = pd.read_sql(query, conn)
+    df = pd.read_sql(query, conn, params=(selected_city,))
     conn.close()
 
     if df.empty:
-        return "No weather data found. Run weather_fetch.py first."
+        return "No weather data found for this city."
 
-    # Create charts folder
     os.makedirs("static", exist_ok=True)
 
     # Temperature chart
     plt.figure()
     plt.plot(df["created_at"], df["temperature"])
-    plt.title("Temperature Trend")
+    plt.title(f"Temperature Trend - {selected_city}")
     plt.xlabel("Time")
     plt.ylabel("Temperature (°C)")
     plt.xticks(rotation=45)
@@ -47,7 +56,7 @@ def index():
     # Humidity chart
     plt.figure()
     plt.plot(df["created_at"], df["humidity"])
-    plt.title("Humidity Trend")
+    plt.title(f"Humidity Trend - {selected_city}")
     plt.xlabel("Time")
     plt.ylabel("Humidity (%)")
     plt.xticks(rotation=45)
@@ -62,13 +71,10 @@ def index():
         city=latest["city"],
         temp=latest["temperature"],
         humidity=latest["humidity"],
-        condition=latest["condition"]
+        condition=latest["condition"],
+        cities=cities,
+        selected_city=selected_city
     )
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-

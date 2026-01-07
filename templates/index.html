@@ -1,32 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Weather Dashboard</title>
-    <meta http-equiv="refresh" content="300">
-    <style>
-        body {
-            font-family: Arial;
-            background: #f4f6f8;
-            text-align: center;
-            padding: 20px;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            margin: 20px auto;
-            width: 400px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        img {
-            width: 90%;
-            margin-top: 20px;
-        }
-    </style>
-</head>
 <body>
 
 <h1>🌦 Weather Dashboard</h1>
+
+<form method="get">
+    <select name="city">
+        {% for c in cities %}
+            <option value="{{ c }}" {% if c == selected_city %}selected{% endif %}>
+                {{ c }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit">Update Weather</button>
+</form>
 
 <div class="card">
     <h2>{{ city }}</h2>
@@ -39,4 +24,3 @@
 <img src="/static/humidity.png" alt="Humidity Chart">
 
 </body>
-</html>

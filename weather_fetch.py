@@ -5,7 +5,7 @@ import psycopg2
 # API CONFIG
 # --------------------
 API_KEY = "0c95b98a72641aa24f0cf692ae8e683d"
-CITY = "Johannesburg"
+CITY = "Viljoenskroon"
 URL = "http://api.openweathermap.org/data/2.5/weather"
 
 # --------------------
