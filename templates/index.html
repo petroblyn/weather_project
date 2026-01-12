@@ -1,31 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            padding: 30px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        input {
+            padding: 10px;
+            width: 70%;
+        }
+        button {
+            padding: 10px 15px;
+        }
+        img {
+            width: 100%;
+            margin-top: 15px;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        h1, h3 {
+            text-align: center;
+        }
+    </style>
+</head>
 <body>
 
-<h1>🌦 Weather Dashboard</h1>
+<div class="container">
+    <h1>🌦 Weather Dashboard</h1>
 
-<form method="get">
-    <input
-        type="text"
-        name="city"
-        placeholder="Search city (e.g. Durban)"
-        required
-    >
-    <button type="submit">Search</button>
-</form>
+    <form method="GET">
+        <input type="text" name="city" placeholder="Search city..." required>
+        <button type="submit">Search</button>
+    </form>
 
-{% if error %}
-    <p style="color: red;">{{ error }}</p>
-{% endif %}
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
 
-{% if city %}
-<div class="card">
-    <h2>{{ city }}</h2>
-    <p><strong>Temperature:</strong> {{ temp }} °C</p>
-    <p><strong>Humidity:</strong> {{ humidity }} %</p>
-    <p><strong>Condition:</strong> {{ condition }}</p>
+    {% if city %}
+        <h2>{{ city }}</h2>
+        <p><strong>Temperature:</strong> {{ temp }} °C</p>
+        <p><strong>Humidity:</strong> {{ humidity }} %</p>
+        <p><strong>Condition:</strong> {{ condition }}</p>
+
+        <h3>Temperature History</h3>
+        <img src="{{ url_for('static', filename='temp.png') }}">
+
+        <h3>Humidity History</h3>
+        <img src="{{ url_for('static', filename='humidity.png') }}">
+
+        <h3>Next 12 Hours Forecast</h3>
+        <img src="{{ url_for('static', filename='hourly_temp.png') }}">
+    {% endif %}
 </div>
 
-<img src="/static/temp.png" alt="Temperature Chart">
-<img src="/static/humidity.png" alt="Humidity Chart">
-{% endif %}
-
 </body>
+</html>
