@@ -2,46 +2,24 @@
 <html>
 <head>
     <title>Weather Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 30px;
-        }
-        .container {
-            max-width: 900px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        input {
-            padding: 10px;
-            width: 70%;
-        }
-        button {
-            padding: 10px 15px;
-        }
-        img {
-            width: 100%;
-            margin-top: 15px;
-        }
-        .error {
-            color: red;
-            font-weight: bold;
-        }
-        h1, h3 {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<div class="container">
-    <h1>🌦 Weather Dashboard</h1>
+<div class="page-bg"></div>
 
-    <form method="GET">
-        <input type="text" name="city" placeholder="Search city..." required>
+<div class="container">
+    <div class="header">
+        <h1>🌦️ Weather Dashboard</h1>
+        <p class="subtitle">Search any city to get real-time weather data</p>
+    </div>
+
+    <form method="GET" class="search-form">
+        <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="city" placeholder="Search city..." required>
+        </div>
         <button type="submit">Search</button>
     </form>
 
@@ -50,19 +28,66 @@
     {% endif %}
 
     {% if city %}
-        <h2>{{ city }}</h2>
-        <p><strong>Temperature:</strong> {{ temp }} °C</p>
-        <p><strong>Humidity:</strong> {{ humidity }} %</p>
-        <p><strong>Condition:</strong> {{ condition }}</p>
+    <div class="weather-content">
+        <div class="current-weather glass-elevated">
+            <h2>{{ city }}</h2>
+            <p class="today-label">Today's Weather</p>
+            <div class="weather-emoji">
+                {% if 'sun' in condition|lower or 'clear' in condition|lower %}☀️
+                {% elif 'cloud' in condition|lower %}⛅
+                {% elif 'rain' in condition|lower %}🌧️
+                {% elif 'storm' in condition|lower %}⛈️
+                {% elif 'snow' in condition|lower %}🌨️
+                {% else %}🌤️{% endif %}
+            </div>
+            <div class="temp-big">{{ temp }}°</div>
+            <p class="condition">{{ condition }}</p>
 
-        <h3>Temperature History</h3>
-        <img src="{{ url_for('static', filename='temp.png') }}">
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <span class="stat-icon warm">🌡️</span>
+                    <span class="stat-label">Feels Like</span>
+                    <span class="stat-value">{{ feels_like|default(temp) }}°C</span>
+                </div>
+                <div class="stat-card glass">
+                    <span class="stat-icon humid">💧</span>
+                    <span class="stat-label">Humidity</span>
+                    <span class="stat-value">{{ humidity }}%</span>
+                </div>
+                <div class="stat-card glass">
+                    <span class="stat-icon cool">💨</span>
+                    <span class="stat-label">Wind</span>
+                    <span class="stat-value">{{ wind|default('N/A') }} km/h</span>
+                </div>
+                <div class="stat-card glass">
+                    <span class="stat-icon accent">👁️</span>
+                    <span class="stat-label">Visibility</span>
+                    <span class="stat-value">{{ visibility|default('N/A') }} km</span>
+                </div>
+            </div>
+        </div>
 
-        <h3>Humidity History</h3>
-        <img src="{{ url_for('static', filename='humidity.png') }}">
+        <div class="charts-grid">
+            <div class="chart-card glass">
+                <h3>🌡️ Temperature History</h3>
+                <img src="{{ url_for('static', filename='temp.png') }}" alt="Temperature chart">
+            </div>
+            <div class="chart-card glass">
+                <h3>💧 Humidity History</h3>
+                <img src="{{ url_for('static', filename='humidity.png') }}" alt="Humidity chart">
+            </div>
+        </div>
 
-        <h3>Next 12 Hours Forecast</h3>
-        <img src="{{ url_for('static', filename='hourly_temp.png') }}">
+        <div class="chart-card glass full-width">
+            <h3>⏰ Next 12 Hours Forecast</h3>
+            <img src="{{ url_for('static', filename='hourly_temp.png') }}" alt="Hourly forecast">
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state glass">
+        <div class="empty-emoji">🔍</div>
+        <p>Enter a city name to see the weather</p>
+    </div>
     {% endif %}
 </div>
 
